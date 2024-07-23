@@ -1,31 +1,64 @@
-const getUsers = (request, response) => {
-  //Get all users
+const User = require("../models/user");
+
+const getUsers = (req, res) => {
+  User.find({})
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((e) => {
+      res.status(500).send(e.message);
+    });
 };
 
 const getUser = (request, response) => {
-    const {user_id} = request.params;
-    response.status(200);
-    response.send(`User with id: ${user_id}`);
+  const { user_id } = request.params;
+  User.findById(user_id)
+    .then((user) => {
+      response.status(200).send(user);
+    })
+    .catch((e) => {
+      response.status(500).send(e.message);
+    });
 };
 
 const createUser = (request, response) => {
-  //Create new user
-   response.status(201);
-  response.send(request.body);
+  const data = request.body;
+  User.create(data)
+    .then((user) => {
+      response.status(201).send(user);
+    })
+    .catch((e) => {
+      response.status(500).send(e.message);
+    });
 };
 
-const updateUser = (request, response) => {
-  //Update user
+const updateUser = (req, res) => {
+  const { user_id } = req.params;
+  const data = req.body;
+  User.findByIdAndUpdate(user_id, data, { new: true, runValidators: true })
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((e) => {
+      res.status(500).send(e.message);
+    });
 };
 
-const deleteUser = (request, response) => {
-  //Delete user
+const deleteUser = (req, res) => {
+  const { user_id } = req.params;
+  User.findByIdAndDelete(user_id)
+    .then((user) => {
+      res.status(200).send("Done");
+    })
+    .catch((e) => {
+      res.status(500).send(e.message);
+    });
 };
 
 module.exports = {
-    getUsers,
-    getUser,
-    createUser,
-    updateUser,
-    deleteUser
-}
+  getUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser,
+};
